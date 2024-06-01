@@ -4,22 +4,53 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApiApp.Dtos.Account;
+using WebApiApp.Interfaces;
 using WebApiApp.Models;
 
 namespace WebApiApp.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        public AccountController(UserManager<ApplicationUser> userManager)
+        private readonly ITokenService _tokenService;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public AccountController(UserManager<ApplicationUser> userManager, ITokenService tokenService, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
+            _signInManager = signInManager;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+
+            if (user == null) return Unauthorized("Invalid username!");
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+            if (!result.Succeeded) return Unauthorized("Username not found and/or password incorrect");
+
+            return Ok(
+                new NewUserResponseDto
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Token = _tokenService.CreateToken(user)
+                }
+            );
         }
 
         [HttpPost]
+        [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerModel)
         {
             try
@@ -37,7 +68,11 @@ namespace WebApiApp.Controllers
                 {
                     var assignRole = await _userManager.AddToRoleAsync(useritem, "User");
                     if(assignRole.Succeeded)
-                        return Ok("User Created!");
+                        return Ok(new NewUserResponseDto{
+                            Username = useritem.UserName,
+                            Email = useritem.Email,
+                            Token = _tokenService.CreateToken(useritem)
+                        });
                     else 
                         return StatusCode(500, assignRole.Errors);
                 }
