@@ -139,3 +139,11 @@
 /Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 /Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Newtonsoft.Json.dll
 /Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Newtonsoft.Json.Bson.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.Internal.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.Extensions.Identity.Core.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.Extensions.Identity.Stores.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/bin/Debug/net8.0/Microsoft.Extensions.Options.dll
+/Users/ahmedelroba/Projects/Learning/TestApiApp/WebApiApp/obj/Debug/net8.0/WebApiApp.sourcelink.json
