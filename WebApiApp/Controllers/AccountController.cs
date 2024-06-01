@@ -44,8 +44,8 @@ namespace WebApiApp.Controllers
             return Ok(
                 new NewUserResponseDto
                 {
-                    Username = user.UserName,
-                    Email = user.Email,
+                    Username = user.UserName ?? "",
+                    Email = user.Email ?? "",
                     Token = _tokenService.CreateToken(user)
                 }
             );
