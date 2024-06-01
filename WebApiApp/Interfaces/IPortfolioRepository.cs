@@ -9,5 +9,8 @@ namespace WebApiApp.Interfaces
     public interface IPortfolioRepository
     {
         Task<List<Stock>> GetPortfolioAsync(ApplicationUser user);
+        Task<Portfolio> CreateAsync(Portfolio portfolio);
+        Task<Portfolio?> DeletePortfolio(ApplicationUser appUser, string symbol);
+
     }
 }

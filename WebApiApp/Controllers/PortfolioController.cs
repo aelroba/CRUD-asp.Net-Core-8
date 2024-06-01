@@ -32,5 +32,29 @@ namespace WebApiApp.Controllers
             var portfolio = await _portfolioRepository.GetPortfolioAsync(user);
             return Ok(portfolio);
         }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeletePortfolio(string symbol)
+        {
+            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            var userPortfolio = await _portfolioRepository.GetPortfolioAsync(appUser);
+
+            var filteredStock = userPortfolio.Where(s => s.Symbol.ToLower() == symbol.ToLower()).ToList();
+
+            if (filteredStock.Count() == 1)
+            {
+                await _portfolioRepository.DeletePortfolio(appUser, symbol);
+            }
+            else
+            {
+                return BadRequest("Stock not in your portfolio");
+            }
+
+            return Ok();
+        }
+
     }
 }
