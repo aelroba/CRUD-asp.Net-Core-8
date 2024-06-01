@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -84,5 +86,17 @@ namespace WebApiApp.Controllers
                 return StatusCode(500, e);
             }
         }
+
+        [HttpGet]
+        [Route("user")]
+        [Authorize]
+        public async Task<IActionResult> GetUser()
+        {
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if(user == null) return BadRequest("");
+            return Ok(user);
+        }
     }
+
+    
 }
