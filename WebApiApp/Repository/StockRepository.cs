@@ -22,7 +22,10 @@ namespace WebApiApp.Repository
             await _context.SaveChangesAsync();
             return stockDto;
         }
-
+        public async Task<Stock?> GetBySymbolAsync(string symbol)
+        {
+            return await _context.Stock.FirstOrDefaultAsync(s => s.Symbol == symbol);
+        }
 
         public async Task<Stock?> DeleteAsync(int id)
         {

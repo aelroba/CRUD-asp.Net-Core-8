@@ -10,6 +10,8 @@ namespace WebApiApp.Interfaces
 
         Task<Stock> CreateStockAsync(Stock stockDto);
         Task<Stock?> GetByIdAsync(int id);
+        Task<Stock?> GetBySymbolAsync(string symbol);
+
         Task<Stock?> DeleteAsync(int id);
         Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto stockDto);
 

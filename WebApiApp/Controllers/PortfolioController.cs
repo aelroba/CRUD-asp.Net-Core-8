@@ -17,10 +17,13 @@ namespace WebApiApp.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPortfolioRepository _portfolioRepository;
-        public PortfolioController(UserManager<ApplicationUser> userManager, IPortfolioRepository portfolioRepository)
+        private readonly IStockRepository _stockRepo;
+        public PortfolioController(UserManager<ApplicationUser> userManager, IStockRepository stockRepo, IPortfolioRepository portfolioRepository)
         {
             _userManager = userManager;
             _portfolioRepository = portfolioRepository;
+            _stockRepo = stockRepo;
+
         }
 
         [HttpGet]
@@ -31,6 +34,38 @@ namespace WebApiApp.Controllers
             if(user == null) return BadRequest("");
             var portfolio = await _portfolioRepository.GetPortfolioAsync(user);
             return Ok(portfolio);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddPortfolio(string symbol)
+        {
+            var username = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var appUser = await _userManager.FindByNameAsync(username);
+            var stock = await _stockRepo.GetBySymbolAsync(symbol);
+
+            if (stock == null) return BadRequest("Stock not found");
+
+            var userPortfolio = await _portfolioRepository.GetPortfolioAsync(appUser);
+
+            if (userPortfolio.Any(e => e.Symbol.ToLower() == symbol.ToLower())) return BadRequest("Cannot add same stock to portfolio");
+
+            var portfolioModel = new Portfolio
+            {
+                StockId = stock.Id,
+                ApplicationUserId = appUser.Id
+            };
+
+            await _portfolioRepository.CreateAsync(portfolioModel);
+
+            if (portfolioModel == null)
+            {
+                return StatusCode(500, "Could not create");
+            }
+            else
+            {
+                return Created();
+            }
         }
 
         [HttpDelete]
