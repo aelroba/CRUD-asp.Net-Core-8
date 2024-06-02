@@ -11,5 +11,8 @@ namespace WebApiApp.Models
 
         public int? StockId { get; set; }
         public Stock? Stock { get; set; }
+
+        public string? ApplicationUserId { get; set; }
+        public ApplicationUser? User { get; set; }
     }
 }

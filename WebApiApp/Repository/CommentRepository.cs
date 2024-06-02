@@ -37,7 +37,7 @@ namespace WebApiApp.Repository
 
         public async Task<List<Comment>> GetAllCommentsAsync()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Include(x => x.User).ToListAsync();
         }
 
         public async Task<Comment?> GetCommentByIdAsync(int id)

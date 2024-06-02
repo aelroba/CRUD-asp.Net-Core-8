@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApiApp.Dtos.Comment;
 using WebApiApp.Interfaces;
 using WebApiApp.Mappers;
+using WebApiApp.Models;
 using WebApiApp.Repository;
 
 namespace WebApiApp.Controllers
@@ -16,10 +19,12 @@ namespace WebApiApp.Controllers
     {
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepository;
-        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepository)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public CommentController(ICommentRepository commentRepo, IStockRepository stockRepository, UserManager<ApplicationUser> userManager)
         {
             _commentRepo = commentRepo;
             _stockRepository = stockRepository;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -47,7 +52,12 @@ namespace WebApiApp.Controllers
             if(! await _stockRepository.StockExists(stockId))
             return BadRequest("Stock Not Exist!");
 
-            var comment = await _commentRepo.CreateComment(commentDto.ToCommentFromCreateDto(stockId));
+            var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var commentDtoModel = commentDto.ToCommentFromCreateDto(stockId);
+            commentDtoModel.ApplicationUserId = user.Id;
+
+            var comment = await _commentRepo.CreateComment(commentDtoModel);
 
             return CreatedAtAction(nameof(GetById),new {id = comment.Id}, comment.ToCommentDto());
         }
